@@ -6,6 +6,7 @@
     <version>1.0.2-SNAPSHOT</version>
     <name>frege-maven-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
+    <description>Apache Maven Compiler Mojo for the Frege Language</description>
     <scm>
         <connection>scm:git:git@github.com:talios/frege-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:talios/frege-maven-plugin.git</developerConnection>
