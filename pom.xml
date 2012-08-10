@@ -1,17 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.theoryinpractise.frege</groupId>
     <artifactId>frege-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>frege-maven-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
     <scm>
         <connection>scm:git:git@github.com:talios/frege-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:talios/frege-maven-plugin.git</developerConnection>
         <url>http://github.com/talios/frege-maven-plugin</url>
-    </scm>
+      <tag>frege-maven-plugin-1.0.1</tag>
+  </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
