@@ -21,8 +21,14 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
     @Parameter(defaultValue = "false")
     protected Boolean verbose;
 
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "true")
     protected Boolean inline;
+
+    @Parameter(defaultValue = "true")
+    protected Boolean make;
+
+    @Parameter(defaultValue = "false")
+    protected Boolean skipCompile;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -56,8 +62,14 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
         if (inline) {
             cl.addArgument("-inline");
         }
+        if (make) {
+            cl.addArgument("-make");
+        }
         if (verbose) {
             cl.addArgument("-v");
+        }
+        if (skipCompile) {
+            cl.addArgument("-j");
         }
 
         // source files
