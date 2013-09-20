@@ -17,7 +17,7 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
     @Parameter
     protected String[] sourceFiles;
 
-    @Parameter(required = true, defaultValue = "${project.build.outputDirectory}")
+    @Parameter(required = true, defaultValue = "${project.build.directory}/generated-sources/frege")
     protected File outputDirectory;
 
     @Parameter(required = true, readonly = true, property = "project.compileClasspathElements")

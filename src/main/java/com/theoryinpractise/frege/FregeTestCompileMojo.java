@@ -17,7 +17,7 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
     @Parameter
     protected String[] testSourceFiles;
 
-    @Parameter(required = true, defaultValue = "${project.build.testOutputDirectory}")
+    @Parameter(required = true, defaultValue = "${project.build.directory}/generated-test-sources/frege")
     protected File testOutputDirectory;
 
     @Parameter(required = true, readonly = true, property = "project.testClasspathElements")
