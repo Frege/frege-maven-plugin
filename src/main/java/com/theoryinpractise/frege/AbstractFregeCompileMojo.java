@@ -1,10 +1,16 @@
 package com.theoryinpractise.frege;
 
-import org.apache.commons.exec.*;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteStreamHandler;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractFregeCompileMojo extends AbstractMojo {
+
+    @Parameter(required = true, readonly = true, property = "project")
+    protected MavenProject project;
 
     @Parameter(defaultValue = "false")
     protected Boolean hints;
@@ -48,6 +57,8 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
         for (Object classpathElement : getClassPathElements()) {
             cp = cp + File.pathSeparator + classpathElement;
         }
+        cp = cp + File.pathSeparator + getOutputDirectory().getAbsolutePath();
+
         cl.addArgument("-cp").addArgument(cp);
 
         cl.addArgument("frege.compiler.Main");

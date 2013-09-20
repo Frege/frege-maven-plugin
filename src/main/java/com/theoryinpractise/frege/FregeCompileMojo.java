@@ -1,5 +1,7 @@
 package com.theoryinpractise.frege;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -39,4 +41,9 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
         return classpathElements;
     }
 
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
+        super.execute();
+    }
 }
