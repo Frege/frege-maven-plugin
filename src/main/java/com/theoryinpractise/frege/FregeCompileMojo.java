@@ -1,5 +1,7 @@
 package com.theoryinpractise.frege;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -17,7 +19,7 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
     @Parameter
     protected String[] sourceFiles;
 
-    @Parameter(required = true, defaultValue = "${project.build.outputDirectory}")
+    @Parameter(required = true, defaultValue = "${project.build.directory}/generated-sources/frege")
     protected File outputDirectory;
 
     @Parameter(required = true, readonly = true, property = "project.compileClasspathElements")
@@ -39,4 +41,9 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
         return classpathElements;
     }
 
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
+        super.execute();
+    }
 }
