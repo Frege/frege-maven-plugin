@@ -3,7 +3,7 @@
     <groupId>com.theoryinpractise.frege</groupId>
     <artifactId>frege-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <name>frege-maven-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
     <description>Apache Maven Compiler Mojo for the Frege Language</description>
@@ -15,6 +15,7 @@
   </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <frege.version>3.21.232-g7b05453</frege.version>
     </properties>
     <developers>
         <developer>
@@ -183,22 +184,40 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get skipexisting="true" src="https://github.com/Frege/frege/releases/download/3.21.232/frege${frege.version}.jar" dest="target/frege-${frege.version}.jar" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
                     <execution>
                         <id>attach-frege-artifact</id>
-                        <phase>initialize</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>attach-artifact</goal>
                         </goals>
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.basedir}/bin/frege-404-0-ge5bafcf.jar</file>
+                                    <file>target/frege-${frege.version}.jar</file>
                                     <type>jar</type>
-                                    <classifier>frege-404-0-ge5bafcf</classifier>
+                                    <classifier>frege-${frege.version}</classifier>
                                 </artifact>
                             </artifacts>
                         </configuration>
