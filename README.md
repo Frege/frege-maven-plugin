@@ -33,4 +33,5 @@ frege-maven-plugin
       </configuration>
     </plugin>
 
+For an example project, please check out [frege-testing](https://github.com/talios/frege-testing).
 
