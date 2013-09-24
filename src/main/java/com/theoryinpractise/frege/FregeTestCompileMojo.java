@@ -16,9 +16,6 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
     @Parameter(defaultValue = "src/test/frege")
     protected File testSourceDirectory;
 
-    @Parameter
-    protected String[] testSourceFiles;
-
     @Parameter(required = true, defaultValue = "${project.build.directory}/generated-test-sources/frege")
     protected File testOutputDirectory;
 
@@ -31,10 +28,6 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
 
     public File getSourceDirectory() {
         return testSourceDirectory;
-    }
-
-    public String[] getSourceFiles() {
-        return testSourceFiles;
     }
 
     public List<String> getClassPathElements() {

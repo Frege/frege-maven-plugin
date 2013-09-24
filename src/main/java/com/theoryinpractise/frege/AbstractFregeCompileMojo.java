@@ -11,13 +11,23 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
+import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
+import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
+import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractFregeCompileMojo extends AbstractMojo {
 
@@ -38,6 +48,9 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "false")
     protected Boolean skipCompile;
+
+    @Parameter(defaultValue = "false")
+    protected boolean includeStale;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -84,33 +97,68 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
         }
 
         // source files
-        for (String sourceFile : getSourceFiles()) {
-            cl.addArgument(new File(getSourceDirectory(), sourceFile).getAbsolutePath());
-        }
+        final Set<File> sourceFiles = getSourceFiles();
 
-        getLog().debug("Command line: " + cl.toString());
+        if (sourceFiles.isEmpty()) {
+            getLog().info("No files to compile, skipping...");
+        } else {
 
-        Executor exec = new DefaultExecutor();
-        Map<String, String> env = new HashMap<String, String>(System.getenv());
-        ExecuteStreamHandler handler = new PumpStreamHandler(System.out, System.err, System.in);
-        exec.setStreamHandler(handler);
+            for (File sourceFile : sourceFiles) {
+                cl.addArgument(sourceFile.getAbsolutePath());
+            }
 
-        int status;
-        try {
-            status = exec.execute(cl, env);
-        } catch (ExecuteException e) {
-            status = e.getExitValue();
-        } catch (IOException e) {
-            status = 1;
-        }
+            getLog().debug("Command line: " + cl.toString());
 
-        if (status != 0) {
-            throw new MojoExecutionException("Frege compilation failed.");
+            Executor exec = new DefaultExecutor();
+            Map<String, String> env = new HashMap<>(System.getenv());
+            ExecuteStreamHandler handler = new PumpStreamHandler(System.out, System.err, System.in);
+            exec.setStreamHandler(handler);
+
+            int status;
+            try {
+                status = exec.execute(cl, env);
+            } catch (ExecuteException e) {
+                status = e.getExitValue();
+            } catch (IOException e) {
+                status = 1;
+            }
+
+            if (status != 0) {
+                throw new MojoExecutionException("Frege compilation failed.");
+            }
         }
 
     }
 
-    public abstract String[] getSourceFiles();
+    protected Set<File> discoverSourceFiles(File sourceDirectory) throws MojoExecutionException {
+
+        if (!sourceDirectory.exists()) return Collections.EMPTY_SET;
+
+        SourceInclusionScanner scanner = getSourceInclusionScanner(includeStale);
+
+        SourceMapping mapping = new SuffixMapping(".fr", new HashSet(Arrays.asList(".java")));
+
+        scanner.addSourceMapping(mapping);
+
+        final Set<File> sourceFiles;
+        try {
+            sourceFiles = scanner.getIncludedSources(sourceDirectory, getOutputDirectory());
+        } catch (InclusionScanException e) {
+            throw new MojoExecutionException("Error scanning source path: \'" + sourceDirectory.getPath() + "\' " + "for  files to recompile.", e);
+        }
+
+        return sourceFiles;
+    }
+
+    protected SourceInclusionScanner getSourceInclusionScanner(boolean includeStale) {
+        return includeStale
+                ? new SimpleSourceInclusionScanner(Collections.singleton("**/*"), Collections.EMPTY_SET)
+                : new StaleSourceScanner(1024);
+    }
+
+    public Set<File> getSourceFiles() throws MojoExecutionException {
+        return discoverSourceFiles(getSourceDirectory());
+    }
 
     public abstract File getSourceDirectory();
 
