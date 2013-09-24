@@ -15,7 +15,7 @@
   </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <frege.version>404-0-ge5bafcf</frege.version>
+        <frege.version>3.21.232-g7b05453</frege.version>
     </properties>
     <developers>
         <developer>
@@ -195,7 +195,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <get skipexisting="true" src="http://jenkins.jamestastic.com/job/frege/lastSuccessfulBuild/artifact/dist/fregejenkins.frege-${frege.version}.jar" dest="target/frege-${frege.version}.jar"/>
+                                <get skipexisting="true" src="https://github.com/Frege/frege/releases/download/3.21.232/frege${frege.version}.jar" dest="target/frege-${frege.version}.jar"/>
                             </target>
                         </configuration>
                     </execution>
