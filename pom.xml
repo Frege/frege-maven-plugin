@@ -3,7 +3,7 @@
     <groupId>com.theoryinpractise.frege</groupId>
     <artifactId>frege-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <name>frege-maven-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
     <description>Apache Maven Compiler Mojo for the Frege Language</description>
@@ -195,7 +195,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <get skipexisting="true" src="https://github.com/Frege/frege/releases/download/3.21.232/frege${frege.version}.jar" dest="target/frege-${frege.version}.jar"/>
+                                <get skipexisting="true" src="https://github.com/Frege/frege/releases/download/3.21.232/frege${frege.version}.jar" dest="target/frege-${frege.version}.jar" />
                             </target>
                         </configuration>
                     </execution>
