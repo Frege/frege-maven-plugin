@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!--
+    Frege Compiler Tile. Includes both the language dependencies and the compiler plugin in one
+    easy to use package.
+   -->
+
+  <dependencies>
+    <dependency>
+      <groupId>com.theoryinpractise.frege</groupId>
+      <artifactId>frege</artifactId>
+      <version>3.21.586-g026e8d7</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+       <plugin>
+         <groupId>com.theoryinpractise.frege</groupId>
+         <artifactId>frege-maven-plugin</artifactId>
+         <version>@project.version@</version>
+         <executions>
+           <execution>
+             <id>frege-compile</id>
+             <phase>generate-sources</phase>
+             <goals>
+               <goal>compile</goal>
+             </goals>
+           </execution>
+           <execution>
+             <id>frege-test-compile</id>
+             <phase>generate-test-sources</phase>
+             <goals>
+               <goal>test-compile</goal>
+             </goals>
+           </execution>
+        </executions>
+        <configuration>
+          <inline>true</inline>
+          <hints>true</hints>
+          <includeStale>false</includeStale>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
