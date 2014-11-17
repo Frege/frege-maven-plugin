@@ -1,5 +1,8 @@
 package com.theoryinpractise.frege;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.FluentIterable;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -75,7 +78,7 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
         cl.addArgument("-cp").addArgument(cp);
 
         cl.addArgument("frege.compiler.Main");
-        cl.addArgument("-sp").addArgument(getSourceDirectory().getAbsolutePath());
+        cl.addArgument("-sp").addArgument(getSourcePath());
 
         // output dir
         cl.addArgument("-d").addArgument(getOutputDirectory().getAbsolutePath());
@@ -130,9 +133,24 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
 
     }
 
-    protected Set<File> discoverSourceFiles(File sourceDirectory) throws MojoExecutionException {
+    private String getSourcePath() {
+        List<File> sourceDirectories = getAllSourceDirectories();
 
-        if (!sourceDirectory.exists()) return Collections.EMPTY_SET;
+        String sourcePath = FluentIterable.from(sourceDirectories).transform(new Function<File, String>() {
+            @Override
+            public String apply(File input) {
+                return input.getAbsolutePath();
+            }
+        }).join(Joiner.on(File.pathSeparator));
+
+        return sourcePath;
+    }
+
+    public abstract List<File> getAllSourceDirectories();
+
+    protected Set<File> discoverSourceFiles(List<File> allSourceDirectories) throws MojoExecutionException {
+
+        if (allSourceDirectories.isEmpty()) return Collections.EMPTY_SET;
 
         SourceInclusionScanner scanner = getSourceInclusionScanner(includeStale);
 
@@ -140,11 +158,13 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
 
         scanner.addSourceMapping(mapping);
 
-        final Set<File> sourceFiles;
-        try {
-            sourceFiles = scanner.getIncludedSources(sourceDirectory, getOutputDirectory());
-        } catch (InclusionScanException e) {
-            throw new MojoExecutionException("Error scanning source path: \'" + sourceDirectory.getPath() + "\' " + "for  files to recompile.", e);
+        final Set<File> sourceFiles = new HashSet<>();
+        for (File file : getAllSourceDirectories()) {
+            try {
+                sourceFiles.addAll(scanner.getIncludedSources(file, getOutputDirectory()));
+            } catch (InclusionScanException e) {
+                throw new MojoExecutionException("Error scanning source path: \'" + file.getPath() + "\' " + "for  files to recompile.", e);
+            }
         }
 
         return sourceFiles;
@@ -157,10 +177,8 @@ public abstract class AbstractFregeCompileMojo extends AbstractMojo {
     }
 
     public Set<File> getSourceFiles() throws MojoExecutionException {
-        return discoverSourceFiles(getSourceDirectory());
+        return discoverSourceFiles(getAllSourceDirectories());
     }
-
-    public abstract File getSourceDirectory();
 
     public abstract File getOutputDirectory();
 

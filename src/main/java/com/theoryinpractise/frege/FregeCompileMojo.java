@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -15,6 +16,9 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
 
     @Parameter(defaultValue = "src/main/frege")
     protected File sourceDirectory;
+
+    @Parameter(required = true, defaultValue = "${project.build.directory}/generated-sources")
+    protected File generatedSourcesDirectory;
 
     @Parameter(required = true, defaultValue = "${project.build.directory}/generated-sources/frege")
     protected File outputDirectory;
@@ -26,10 +30,6 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
         return outputDirectory;
     }
 
-    public File getSourceDirectory() {
-        return sourceDirectory;
-    }
-
     public List<String> getClassPathElements() {
         return classpathElements;
     }
@@ -39,4 +39,19 @@ public class FregeCompileMojo extends AbstractFregeCompileMojo {
         project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
         super.execute();
     }
+
+    @Override
+    public List<File> getAllSourceDirectories() {
+        List<File> sourceDirectories = new ArrayList<>();
+        for (File file : generatedSourcesDirectory.listFiles()) {
+            if (file.isDirectory()) {
+                sourceDirectories.add(file);
+            }
+        }
+        if (sourceDirectory.exists()) {
+          sourceDirectories.add(sourceDirectory);
+        }
+        return sourceDirectories;
+    }
+
 }
