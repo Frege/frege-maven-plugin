@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mojo(name = "test-compile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST)
@@ -15,6 +16,9 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
 
     @Parameter(defaultValue = "src/test/frege")
     protected File testSourceDirectory;
+
+    @Parameter(required = true, defaultValue = "${project.build.directory}/generated-test-sources")
+    protected File generatedTestSourcesDirectory;
 
     @Parameter(required = true, defaultValue = "${project.build.directory}/generated-test-sources/frege")
     protected File testOutputDirectory;
@@ -26,10 +30,6 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
         return testOutputDirectory;
     }
 
-    public File getSourceDirectory() {
-        return testSourceDirectory;
-    }
-
     public List<String> getClassPathElements() {
         return testClasspathElements;
     }
@@ -39,5 +39,20 @@ public class FregeTestCompileMojo extends AbstractFregeCompileMojo {
         project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
         super.execute();
     }
+
+    @Override
+    public List<File> getAllSourceDirectories() {
+        List<File> sourceDirectories = new ArrayList<>();
+        for (File file : generatedTestSourcesDirectory.listFiles()) {
+            if (file.isDirectory()) {
+                sourceDirectories.add(file);
+            }
+        }
+        if (testSourceDirectory.exists()) {
+            sourceDirectories.add(testSourceDirectory);
+        }
+        return sourceDirectories;
+    }
+
 
 }
